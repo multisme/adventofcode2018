@@ -2,6 +2,7 @@ use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
+use std::collections::BTreeSet;
 
 fn read_input() -> std::string::String {
     let path = Path::new("../1.txt");
@@ -25,21 +26,21 @@ fn main() {
     let split = s.split_whitespace();
     let mut result = 0;
     let mut frequency = 0;
-    let mut buf: Vec<i32> = Vec::new();
+    let mut buf: BTreeSet<i32> = BTreeSet::new();
     for s1 in split {
         result += s1.parse::<i32>().unwrap();
         if buf.contains(&result)
         {
             frequency = result;
         }
-        buf.push(result);
+        buf.insert(result);
     }
 
     let num: Vec<i32>  = s.split_whitespace()
         .map(|x| x.parse::<i32>().unwrap())
         .collect();
 
-//    result = num.iter().fold(0i32, |acc, &x| { let y = acc + x; buf.push(y); y});
+//    result = num.iter().fold(0i32, |acc, &x| { let y = acc + x; buf.insert(y); y});
   //  result = num.iter().sum();
     let map = result;
     for s1 in s.split_whitespace().cycle() {
@@ -49,7 +50,7 @@ fn main() {
             frequency = result;
             break;
         }
-        buf.push(result);
+        buf.insert(result);
     }
     println!("result: 1 {} 2 {}", map, frequency);
 }
