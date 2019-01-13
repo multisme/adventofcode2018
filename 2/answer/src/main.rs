@@ -50,6 +50,7 @@ fn main() {
             temp[*d as usize] += 1;
         }
     }
+    
     result1 = temp.iter().filter(|&v| *v != 0).product();
     let mut temp2 = Vec::new();
     for d in s.split_whitespace(){
@@ -57,15 +58,14 @@ fn main() {
             if (b != d){
                 let res = b.chars().zip(d.chars())
                     .filter(|&(c1, c2)| c1 == c2)
-                    .collect::<Vec<_>>();
+                    .map(|(c, _)| c)
+                    .collect::<String>();
                 temp2.push(res);
             }
         }
     }
+    
     temp2.sort_by(|a, b| b.len().cmp(&a.len()));
-  //  let mut result2 = s.split_whitespace().collect::<Vec<_>>()
-  //      .sort_by(|a, b| edit_distance::edit_distance(a, b));
-    let result2 = temp2.first().into_iter().collect::<Vec<_>>();
-    //println!("{:?}", temp2.first().map(|&(s1,_)| s1).collect::str());
+    let result2 = temp2.first().unwrap();
     println!("result1: 1 {} 2 {:?}", result1, result2);
 }
