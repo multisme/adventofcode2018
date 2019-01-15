@@ -28,8 +28,6 @@ pub fn tmetrics_hamming(a: &[u16], b: &[u16]) -> usize {
 fn main() {
  
     let s = read_input();
-    let mut result1 = 0;
-    let mut result2 = 0;
     let len = s.split_whitespace()
         .next().unwrap().len() + 1;
     let mut temp = vec![0; len];;
@@ -51,11 +49,12 @@ fn main() {
         }
     }
     
-    result1 = temp.iter().filter(|&v| *v != 0).product();
+    let result1: i32 = temp.iter().filter(|&v| *v != 0).product();
+ 
     let mut temp2 = Vec::new();
     for d in s.split_whitespace(){
         for b in s.split_whitespace(){
-            if (b != d){
+            if b != d{
                 let res = b.chars().zip(d.chars())
                     .filter(|&(c1, c2)| c1 == c2)
                     .map(|(c, _)| c)
@@ -67,5 +66,5 @@ fn main() {
     
     temp2.sort_by(|a, b| b.len().cmp(&a.len()));
     let result2 = temp2.first().unwrap();
-    println!("result1: 1 {} 2 {:?}", result1, result2);
+    println!("result:\n 1 - {}\n 2 - {}", result1, result2);
 }

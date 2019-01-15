@@ -1,0 +1,8 @@
+[package]
+name = "answer"
+version = "0.1.0"
+authors = ["Korok Toi <abrikou@gmail.com>"]
+
+[dependencies]
+edit-distance = "2.0.0"
+chrono = "0.4"
