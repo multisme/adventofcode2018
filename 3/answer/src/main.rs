@@ -37,8 +37,9 @@ fn draw_squares(map: &mut Vec<u32>, square: ((u32, u32), (u32, u32))) -> bool{
     let mut ret = true;
     let y: u32 = (square.0).1 * 1000;
     for j in 0..(square.1).1{
+        let pos: u32 = y + 1000 * j + (square.0).0 as u32;
         for i in 0..(square.1).0{
-            let index: u32 = y + 1000 * j + i  + (square.0).0 as u32;
+            let index: u32 = pos + i;
             if map[index as usize] > 1{
                 ret = false;
             }

@@ -5,4 +5,3 @@ authors = ["Korok Toi <abrikou@gmail.com>"]
 
 [dependencies]
 edit-distance = "2.0.0"
-chrono = "0.4"

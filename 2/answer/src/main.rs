@@ -21,10 +21,6 @@ fn read_input() -> std::string::String {
     s
 }
 
-pub fn tmetrics_hamming(a: &[u16], b: &[u16]) -> usize {
-    a.iter().zip(b).filter(|&(a, b)| a == b).count()
-}
-
 fn main() {
  
     let s = read_input();

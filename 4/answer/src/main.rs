@@ -3,7 +3,6 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 use std::collections::HashMap;
-extern crate edit_distance;
 
 fn read_input() -> std::string::String {
     let path = Path::new("../4.txt");
@@ -21,39 +20,69 @@ fn read_input() -> std::string::String {
     s
 }
 
-fn parse_line(line: &str) -> ((u32, u32), (u32, u32)){
-    let data = line.split_whitespace().collect::<Vec<_>>();
-    let coord = data[2].split(&[',', ':'][0..])
-        .take(2)
-        .map(|x| x.parse::<u32>().unwrap())
-        .collect::<Vec<_>>();
-    let size = data[3].split('x')
-        .map(|x| x.parse::<u32>().unwrap())
-        .collect::<Vec<_>>();
-    ((coord[0], coord[1]), (size[0], size[1]))
-}
-
-fn draw_squares(map: &mut Vec<u32>, square: ((u32, u32), (u32, u32))) -> bool{
-    let mut ret = true;
-    let y: u32 = (square.0).1 * 1000;
-    for j in 0..(square.1).1{
-        for i in 0..(square.1).0{
-            let index: u32 = y + 1000 * j + i  + (square.0).0 as u32;
-            if map[index as usize] > 1{
-                ret = false;
-            }
-            map[index as usize] += 1;
-        }
-    }
-    ret
+fn manage_time(str: &str, p: &mut Vec<i16>, val: i16)->(){
+    let time: Vec<usize> = str.split(&[':', ']'][..])
+        .take(2).map(|x| x.parse().unwrap())
+        .collect();
+   // println!("{:?} {:?}", time[0], time[1]);
+    let index = if time[0] == 23 { 0 }
+        else if time[0] == 00 { time[1]}
+        else {60};
+    for x in index..60{ p [x] += val}
+  //  println!("{:?}", p);
 }
 
 fn main() {
  
-    let mut s = read_input();
-    let mut s = s.lines().collect::<Vec<_>>();
-    s.sort();
-    for s in s {
-        println!("{:?}", s);
+    let s = read_input();
+    let mut data = s.lines().collect::<Vec<_>>();
+    let mut map: HashMap<String, Vec<_>> = HashMap::new();
+    data.sort();
+    for d in data{
+   //     println!("{:?}", d);
     }
+    let mut data = s.lines().collect::<Vec<_>>();
+    data.sort();
+    let data = data.join("\n");
+    let mut insert = String::new();
+    for line in data.lines(){
+        if line.contains("Guard"){
+            insert.push_str("*");
+        }
+        insert.push_str(line);
+        insert.push_str("\n");
+    }
+    let mut data = insert.split("*");
+    data.next();
+    let mut test = insert.split("*").collect::<Vec<_>>();
+    for shift in test{
+        println!("{:?}", shift);
+    }
+    for shift in data{
+        let mut shift = shift.lines();
+        let mut splited = shift.next()
+            .unwrap().split_whitespace()
+            .collect::<Vec<_>>();
+     //   println!("{:?}", splited[3]);
+        let p = map.entry(splited[3].to_string())
+            .or_insert(vec![0i16; 60]);
+        manage_time(splited[1], p, 0);
+        //println!("{:?}", shift);
+        for line in shift{
+            let mut splited = line
+                .split_whitespace();
+            let split = splited.nth(1).unwrap();
+            if line.contains("wakes"){
+                manage_time(split, p, -1);
+            } else {
+                manage_time(split, p, 1);
+            }
+        }
+    }
+    println!("{:?}", map);
+    let result = map.iter()
+        .map(|(k, v)|   (k, v.iter().sum::<i16>(), v.iter()
+        .position(|r| r == v.iter().max().unwrap()).unwrap()))
+        .collect::<Vec<_>>();
+    println!("{:?}", result);
 }
