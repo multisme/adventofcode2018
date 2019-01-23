@@ -54,11 +54,19 @@ fn main() {
     let mut index: usize = 0;
     for j in 0..max.1{
         for i in 0..max.0{
+
+            // Compute all manhattan distances available for a specific coord
             let mut res: Vec<_> = coord.iter().enumerate()
                 .map(|(k, x)| (m_distance(*x, (i,j)), from_u32(57 + k as u32).unwrap()))
                 .collect();
+
+            // Sort to obtain the smaller one as first index
             res.sort();
+
+            // Stock cumulative distance of each point to that coord
             map_sum[index + i as usize] = res.iter().fold(0, |acc, x| acc + x.0);
+            
+            // Stock an identifier for each Zone, '.' if two zone are equidistant to this coord
             map[index + i as usize] = 
                 if res[0].0 != res[1].0{
                     res[0].1
@@ -71,13 +79,15 @@ fn main() {
 
     // Create filter to remove infinites areas;
     let mut filter = Vec::new();
-    filter.extend(map[0..(max.0 as usize)].iter().cloned());
-    filter.extend(map[(len - max.0 as usize)..len].iter().cloned());
+    filter.extend(map[0..(max.0 as usize)].iter());
+    filter.extend(map[(len - max.0 as usize)..len].iter());
     for x in map.iter().step_by(max.0 as usize){ filter.push(*x); }
     for x in map.iter().step_by(max.0 as usize + 1){ filter.push(*x); }
 
-    let mut result1: Vec<(usize, char)> = Vec::new();
 
+    // Count the occurence of each identifier in the map
+    // While filter infinite array and sorting to attain the biggest region
+    let mut result1: Vec<(usize, char)> = Vec::new();
     for x in 0..coord.len(){
         let _char = from_u32(57 + x as u32).unwrap();
         if filter.contains(&_char){
@@ -87,6 +97,8 @@ fn main() {
         result1.push((_count, _char));
     }
     result1.sort();
+    
+    // Filter the zone for part2
     let result2 = map_sum.iter().filter(|&x| *x < 10000).count();
-    println!("{:?} {:?}", result1.last().unwrap(), result2);
+    println!("part1:{:?} part2:{:?}", (result1.last().unwrap()).0, result2);
 }
