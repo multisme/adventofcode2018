@@ -1,27 +1,26 @@
+use std::collections::BTreeSet;
 use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
-use std::collections::BTreeSet;
 
 fn read_input() -> std::string::String {
     let path = Path::new("../1.txt");
     let display = path.display();
 
-    let mut file = match File::open(&path){
+    let mut file = match File::open(&path) {
         Err(why) => panic!("couldn't open the file {}: {}", display, why.description()),
         Ok(file) => file,
     };
     let mut s = String::new();
     match file.read_to_string(&mut s) {
         Err(why) => panic!("couldn't read {}:  {}", display, why.description()),
-        Ok(_) => ()
+        Ok(_) => (),
     };
     s
 }
 
 fn main() {
-
     let s = read_input();
     let split = s.split_whitespace();
     let mut result = 0;
@@ -29,24 +28,23 @@ fn main() {
     let mut buf: BTreeSet<i32> = BTreeSet::new();
     for s1 in split {
         result += s1.parse::<i32>().unwrap();
-        if buf.contains(&result)
-        {
+        if buf.contains(&result) {
             frequency = result;
         }
         buf.insert(result);
     }
 
-    let num: Vec<i32>  = s.split_whitespace()
+    let num: Vec<i32> = s
+        .split_whitespace()
         .map(|x| x.parse::<i32>().unwrap())
         .collect();
 
-//    result = num.iter().fold(0i32, |acc, &x| { let y = acc + x; buf.insert(y); y});
-  //  result = num.iter().sum();
+    //    result = num.iter().fold(0i32, |acc, &x| { let y = acc + x; buf.insert(y); y});
+    //  result = num.iter().sum();
     let map = result;
     for s1 in s.split_whitespace().cycle() {
         result += s1.parse::<i32>().unwrap();
-        if buf.contains(&result)
-        {
+        if buf.contains(&result) {
             frequency = result;
             break;
         }

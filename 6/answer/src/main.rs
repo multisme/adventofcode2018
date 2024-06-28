@@ -1,14 +1,14 @@
+use std::char::from_u32;
 use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
-use std::char::from_u32;
 
 fn read_input() -> std::string::String {
     let path = Path::new("../test.txt");
     let display = path.display();
 
-    let mut file = match File::open(&path){
+    let mut file = match File::open(&path) {
         Err(why) => panic!("couldn't open the file {}: {}", display, why.description()),
         Ok(file) => file,
     };
@@ -16,25 +16,30 @@ fn read_input() -> std::string::String {
     let mut s = String::new();
     match file.read_to_string(&mut s) {
         Err(why) => panic!("couldn't read {}:  {}", display, why.description()),
-        Ok(_) => ()
+        Ok(_) => (),
     };
     s
 }
 
-fn m_distance(a:(i32, i32), b:(i32,i32)) -> i32{
+fn m_distance(a: (i32, i32), b: (i32, i32)) -> i32 {
     let x = (a.0 - b.0).abs();
     let y = (a.1 - b.1).abs();
     (x + y)
 }
 
 fn main() {
-
     let s: String = read_input();
 
     // Parse data
-    let coord = s.lines().map(|x| { let mut sp = x.split(", ");
-        (sp.next().unwrap().parse::<i32>().unwrap(),
-        sp.next().unwrap().parse::<i32>().unwrap())})
+    let coord = s
+        .lines()
+        .map(|x| {
+            let mut sp = x.split(", ");
+            (
+                sp.next().unwrap().parse::<i32>().unwrap(),
+                sp.next().unwrap().parse::<i32>().unwrap(),
+            )
+        })
         .collect::<Vec<_>>();
 
     // Find dimension of the maps
@@ -49,15 +54,16 @@ fn main() {
 
     // Fill the map
     let len = (max.1 * max.0) as usize;
-    let mut map = vec![' '; len ];
+    let mut map = vec![' '; len];
     let mut map_sum = vec![0i32; len];
     let mut index: usize = 0;
-    for j in 0..max.1{
-        for i in 0..max.0{
-
+    for j in 0..max.1 {
+        for i in 0..max.0 {
             // Compute all manhattan distances available for a specific coord
-            let mut res: Vec<_> = coord.iter().enumerate()
-                .map(|(k, x)| (m_distance(*x, (i,j)), from_u32(57 + k as u32).unwrap()))
+            let mut res: Vec<_> = coord
+                .iter()
+                .enumerate()
+                .map(|(k, x)| (m_distance(*x, (i, j)), from_u32(57 + k as u32).unwrap()))
                 .collect();
 
             // Sort to obtain the smaller one as first index
@@ -65,14 +71,9 @@ fn main() {
 
             // Stock cumulative distance of each point to that coord
             map_sum[index + i as usize] = res.iter().fold(0, |acc, x| acc + x.0);
-            
+
             // Stock an identifier for each Zone, '.' if two zone are equidistant to this coord
-            map[index + i as usize] = 
-                if res[0].0 != res[1].0{
-                    res[0].1
-                } else {
-                    '.'
-                };
+            map[index + i as usize] = if res[0].0 != res[1].0 { res[0].1 } else { '.' };
         }
         index += max.0 as usize;
     }
@@ -81,24 +82,31 @@ fn main() {
     let mut filter = Vec::new();
     filter.extend(map[0..(max.0 as usize)].iter());
     filter.extend(map[(len - max.0 as usize)..len].iter());
-    for x in map.iter().step_by(max.0 as usize){ filter.push(*x); }
-    for x in map.iter().step_by(max.0 as usize + 1){ filter.push(*x); }
-
+    for x in map.iter().step_by(max.0 as usize) {
+        filter.push(*x);
+    }
+    for x in map.iter().step_by(max.0 as usize + 1) {
+        filter.push(*x);
+    }
 
     // Count the occurence of each identifier in the map
     // While filter infinite array and sorting to attain the biggest region
     let mut result1: Vec<(usize, char)> = Vec::new();
-    for x in 0..coord.len(){
+    for x in 0..coord.len() {
         let _char = from_u32(57 + x as u32).unwrap();
-        if filter.contains(&_char){
-            continue ;
+        if filter.contains(&_char) {
+            continue;
         }
         let _count = map.iter().filter(|&x| *x == _char).count();
         result1.push((_count, _char));
     }
     result1.sort();
-    
+
     // Filter the zone for part2
     let result2 = map_sum.iter().filter(|&x| *x < 10000).count();
-    println!("part1:{:?} part2:{:?}", (result1.last().unwrap()).0, result2);
+    println!(
+        "part1:{:?} part2:{:?}",
+        (result1.last().unwrap()).0,
+        result2
+    );
 }
